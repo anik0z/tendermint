@@ -628,7 +628,7 @@ func (c *Client) sequence(
 // see VerifyHeader
 // Bisection finds the middle header between a trusted and new header, reiterating the action until it
 // verifies a header. A cache of headers requested by the primary is kept such that when a
-// verification is made, and the light client tries again to verify the new header,
+// verification is made, and the light client tries again to verify the new header in the middle,
 // the light client does not need to ask for all the same headers again.
 func (c *Client) bisection(
 	initiallyTrustedHeader *types.SignedHeader,
@@ -675,7 +675,7 @@ func (c *Client) bisection(
 		case ErrNewValSetCantBeTrusted:
 			// do add another header to the end of the cache
 			if depth == len(headerCache)-1 {
-				pivotHeight := (headerCache[depth].sh.Height + trustedHeader.Height) / 2
+				pivotHeight := (headerCache[depth].sh.Height + trustedHeader.Height) * 9 / 16
 				interimHeader, interimVals, err := c.fetchHeaderAndValsAtHeight(pivotHeight)
 				if err != nil {
 					return err
